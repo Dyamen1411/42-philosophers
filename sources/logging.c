@@ -6,7 +6,7 @@
 /*   By: amassias <amassias@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/02 17:47:27 by amassias          #+#    #+#             */
-/*   Updated: 2024/03/02 17:50:38 by amassias         ###   ########.fr       */
+/*   Updated: 2024/03/02 17:53:24 by amassias         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,5 +26,5 @@ void	log_action(
 			t_action action
 			)
 {
-	printf("%lu %u %s", timestamp, philo_id, g_messages[action]);
+	printf("%lu %u %s\n", timestamp, philo_id, g_messages[action]);
 }
