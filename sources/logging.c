@@ -6,11 +6,13 @@
 /*   By: amassias <amassias@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/02 17:47:27 by amassias          #+#    #+#             */
-/*   Updated: 2024/03/04 17:13:45 by amassias         ###   ########.fr       */
+/*   Updated: 2024/03/04 17:21:43 by amassias         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
+
+#include <stdio.h>
 
 const char	*g_messages[] = {
 [ACTION_TAKE] = "has taken a fork",
