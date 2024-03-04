@@ -6,7 +6,7 @@
 /*   By: amassias <amassias@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/02 17:37:17 by amassias          #+#    #+#             */
-/*   Updated: 2024/03/04 17:09:22 by amassias         ###   ########.fr       */
+/*   Updated: 2024/03/04 17:13:07 by amassias         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,9 +66,8 @@ typedef struct s_context		t_context;
 
 void	log_action(
 			t_context *ctx,
-			unsigned int philo_id,
-			unsigned long timestamp,
-			t_action action
+			t_philosopher *philosopher,
+			unsigned long timestamp
 			);
 
 #endif
