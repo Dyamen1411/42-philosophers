@@ -6,7 +6,7 @@
 /*   By: amassias <amassias@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/02 17:37:17 by amassias          #+#    #+#             */
-/*   Updated: 2024/03/02 17:55:49 by amassias         ###   ########.fr       */
+/*   Updated: 2024/03/04 17:09:22 by amassias         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 # define PHILOSOPHERS_H
 
 # include <pthread.h>
+# include <stdbool.h>
 
 enum	e_action
 {
@@ -33,16 +34,35 @@ struct	s_settings
 	signed long		max_eating;
 };
 
+struct							s_philosopher;
+
 struct	s_context
 {
-	pthread_mutex_t	logging_mutex;
+	struct s_settings		settings;
+	struct s_sphilosopher	*philosopers;
+	pthread_mutex_t			*forks;
+	bool					is_simulation_running;
+	struct s_mutexes
+	{
+		pthread_mutex_t			logging;
+		pthread_mutex_t			simulation_running;
+	}						mutexes;
 };
 
-typedef enum e_action		t_action;
+struct	s_philosopher
+{
+	unsigned int		id;
+	enum e_action		status;
+	struct s_context	*context;
+};
 
-typedef struct s_settings	t_settings;
+typedef enum e_action			t_action;
 
-typedef struct s_context	t_context;
+typedef struct s_settings		t_settings;
+
+typedef struct s_philosopher	t_philosopher;
+
+typedef struct s_context		t_context;
 
 void	log_action(
 			t_context *ctx,
