@@ -6,7 +6,7 @@
 #    By: amassias <amassias@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/03/02 17:28:24 by amassias          #+#    #+#              #
-#    Updated: 2024/03/02 17:52:42 by amassias         ###   ########.fr        #
+#    Updated: 2024/03/04 17:15:52 by amassias         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -42,8 +42,9 @@ LFLAGS			:=					\
 # **************************************************************************** #
 
 FILES			:=															\
-	main																	\
 	logging																	\
+	main																	\
+	running_helpers															\
 
 SRCS			:=	$(addprefix $(SRC_DIR)/,$(addsuffix .c,$(FILES)))
 

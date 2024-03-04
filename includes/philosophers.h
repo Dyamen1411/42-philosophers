@@ -6,7 +6,7 @@
 /*   By: amassias <amassias@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/02 17:37:17 by amassias          #+#    #+#             */
-/*   Updated: 2024/03/04 17:13:07 by amassias         ###   ########.fr       */
+/*   Updated: 2024/03/04 17:15:10 by amassias         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,14 @@ void	log_action(
 			t_context *ctx,
 			t_philosopher *philosopher,
 			unsigned long timestamp
+			);
+
+bool	context_is_running(
+			t_context *ctx
+			);
+
+void	context_kill_simulation(
+			t_context *ctx
 			);
 
 #endif
