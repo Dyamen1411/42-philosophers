@@ -6,7 +6,7 @@
 /*   By: amassias <amassias@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/02 17:37:17 by amassias          #+#    #+#             */
-/*   Updated: 2024/03/04 17:15:10 by amassias         ###   ########.fr       */
+/*   Updated: 2024/03/04 17:45:40 by amassias         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ struct	s_settings
 	unsigned long	death_timer;
 	unsigned long	eating_timer;
 	unsigned long	sleeping_timer;
-	signed long		max_eating;
+	unsigned long	max_eating;
 };
 
 struct							s_philosopher;

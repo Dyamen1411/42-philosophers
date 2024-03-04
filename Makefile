@@ -6,7 +6,7 @@
 #    By: amassias <amassias@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/03/02 17:28:24 by amassias          #+#    #+#              #
-#    Updated: 2024/03/04 17:15:52 by amassias         ###   ########.fr        #
+#    Updated: 2024/03/04 17:52:23 by amassias         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -31,6 +31,7 @@ BIN_DIR			:=	binaries
 
 CFLAGS			:=					\
 	-I$(INC_DIR)					\
+	-Wall -Werror -Wextra			\
 
 LFLAGS			:=					\
 	-lpthread						\
@@ -42,6 +43,8 @@ LFLAGS			:=					\
 # **************************************************************************** #
 
 FILES			:=															\
+	utils/chars																\
+	utils/readers															\
 	logging																	\
 	main																	\
 	running_helpers															\
