@@ -6,7 +6,7 @@
 /*   By: amassias <amassias@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/02 17:37:17 by amassias          #+#    #+#             */
-/*   Updated: 2024/03/04 17:45:40 by amassias         ###   ########.fr       */
+/*   Updated: 2024/03/06 18:13:04 by amassias         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,18 +34,16 @@ struct	s_settings
 	unsigned long	max_eating;
 };
 
-struct							s_philosopher;
-
 struct	s_context
 {
 	struct s_settings		settings;
-	struct s_sphilosopher	*philosopers;
 	pthread_mutex_t			*forks;
 	bool					is_simulation_running;
 	struct s_mutexes
 	{
 		pthread_mutex_t			logging;
 		pthread_mutex_t			simulation_running;
+		bool					_are_initialized;
 	}						mutexes;
 };
 
