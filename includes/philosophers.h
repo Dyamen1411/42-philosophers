@@ -3,18 +3,37 @@
 /*                                                        :::      ::::::::   */
 /*   philosophers.h                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: amassias <amassias@student.42.fr>          +#+  +:+       +#+        */
+/*   By: amassias <amassias@student.42lehavre.fr    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/02 17:37:17 by amassias          #+#    #+#             */
-/*   Updated: 2024/03/06 18:13:04 by amassias         ###   ########.fr       */
+/*   Updated: 2024/03/18 16:35:05 by amassias         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+/**
+ * @file philosophers.h
+ * @author Antoine Massias (amassias@student.42lehavre.fr)
+ * @date 2024-03-02
+ * @copyright Copyright (c) 2024
+ */
 
 #ifndef PHILOSOPHERS_H
 # define PHILOSOPHERS_H
 
+/* ************************************************************************** */
+/*                                                                            */
+/* Includes                                                                   */
+/*                                                                            */
+/* ************************************************************************** */
+
 # include <pthread.h>
 # include <stdbool.h>
+
+/* ************************************************************************** */
+/*                                                                            */
+/* Enums                                                                      */
+/*                                                                            */
+/* ************************************************************************** */
 
 enum	e_action
 {
@@ -24,6 +43,12 @@ enum	e_action
 	ACTION_THINKING,
 	ACTION_DEATH
 };
+
+/* ************************************************************************** */
+/*                                                                            */
+/* Structures                                                                 */
+/*                                                                            */
+/* ************************************************************************** */
 
 struct	s_settings
 {
@@ -54,6 +79,12 @@ struct	s_philosopher
 	struct s_context	*context;
 };
 
+/* ************************************************************************** */
+/*                                                                            */
+/* Types                                                                      */
+/*                                                                            */
+/* ************************************************************************** */
+
 typedef enum e_action			t_action;
 
 typedef struct s_settings		t_settings;
@@ -61,6 +92,12 @@ typedef struct s_settings		t_settings;
 typedef struct s_philosopher	t_philosopher;
 
 typedef struct s_context		t_context;
+
+/* ************************************************************************** */
+/*                                                                            */
+/* Header protoypes                                                           */
+/*                                                                            */
+/* ************************************************************************** */
 
 void	log_action(
 			t_context *ctx,

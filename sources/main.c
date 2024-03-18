@@ -6,7 +6,20 @@
 /*   By: amassias <amassias@student.42lehavre.fr    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/02 17:30:38 by amassias          #+#    #+#             */
-/*   Updated: 2024/03/18 16:09:19 by amassias         ###   ########.fr       */
+/*   Updated: 2024/03/18 16:31:52 by amassias         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+/**
+ * @file main.c
+ * @author Antoine Massias (amassias@student.42lehavre.fr)
+ * @date 2024-03-02
+ * @copyright Copyright (c) 2024
+ */
+
+/* ************************************************************************** */
+/*                                                                            */
+/* Includes                                                                   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,9 +31,21 @@
 #include <string.h>
 #include <unistd.h>
 
+/* ************************************************************************** */
+/*                                                                            */
+/* Defines                                                                    */
+/*                                                                            */
+/* ************************************************************************** */
+
 #define ERR_NEA "%s: Not enough arguments"
 #define ERR_TMA "%s: Too many arguments"
 #define ERR_NNA "%s: %s: Expected numeric argument"
+
+/* ************************************************************************** */
+/*                                                                            */
+/* Helper protoypes                                                           */
+/*                                                                            */
+/* ************************************************************************** */
 
 static bool	_parse_args(
 				char *pname,
@@ -36,6 +61,12 @@ static void	_cleanup_context(
 				t_context *ctx
 				);
 
+/* ************************************************************************** */
+/*                                                                            */
+/* Main                                                                       */
+/*                                                                            */
+/* ************************************************************************** */
+
 int	main(
 		int argc,
 		char **argv
@@ -48,17 +79,22 @@ int	main(
 	if (argc > 6)
 		return (dprintf(STDERR_FILENO, ERR_TMA "\n", *argv), 1);
 	if (_parse_args(argv[0], &context.settings, argv + 1))
-		return (2);
+		return (1);
 	printf("philosopher_count: %u\n", context.settings.philosopher_count);
 	printf("death_timer      : %lu\n", context.settings.death_timer);
 	printf("eating_timer     : %lu\n", context.settings.eating_timer);
 	printf("sleeping_timer   : %lu\n", context.settings.sleeping_timer);
 	printf("max_eating       : %lu\n", context.settings.max_eating);
 	if (_initialize_context(&context))
-		return (3);
-	_cleanup_context(&context);
-	return (EXIT_SUCCESS);
+		return (1);
+	return (_cleanup_context(&context), EXIT_SUCCESS);
 }
+
+/* ************************************************************************** */
+/*                                                                            */
+/* Helper implementation                                                      */
+/*                                                                            */
+/* ************************************************************************** */
 
 static bool	_parse_args(
 				char *pname,
