@@ -6,7 +6,7 @@
 /*   By: amassias <amassias@student.42lehavre.fr    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/02 17:37:17 by amassias          #+#    #+#             */
-/*   Updated: 2024/03/18 16:35:05 by amassias         ###   ########.fr       */
+/*   Updated: 2024/03/18 19:28:20 by amassias         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,6 +76,11 @@ struct	s_philosopher
 {
 	unsigned int		id;
 	enum e_action		status;
+	unsigned long		last_time_eaten;
+	pthread_t			thread;
+	pthread_mutex_t		last_time_eaten_mutex;
+	pthread_mutex_t		*left_fork;
+	pthread_mutex_t		*right_fork;
 	struct s_context	*context;
 };
 

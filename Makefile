@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: amassias <amassias@student.42.fr>          +#+  +:+       +#+         #
+#    By: amassias <amassias@student.42lehavre.fr    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/03/02 17:28:24 by amassias          #+#    #+#              #
-#    Updated: 2024/03/04 17:52:23 by amassias         ###   ########.fr        #
+#    Updated: 2024/03/18 19:47:09 by amassias         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -31,7 +31,7 @@ BIN_DIR			:=	binaries
 
 CFLAGS			:=					\
 	-I$(INC_DIR)					\
-	-Wall -Werror -Wextra			\
+	-Wall -Werror -Wextra -g		\
 
 LFLAGS			:=					\
 	-lpthread						\

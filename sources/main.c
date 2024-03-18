@@ -6,7 +6,7 @@
 /*   By: amassias <amassias@student.42lehavre.fr    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/02 17:30:38 by amassias          #+#    #+#             */
-/*   Updated: 2024/03/18 16:31:52 by amassias         ###   ########.fr       */
+/*   Updated: 2024/03/18 19:57:31 by amassias         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/time.h>
 #include <unistd.h>
 
 /* ************************************************************************** */
@@ -61,6 +62,10 @@ static void	_cleanup_context(
 				t_context *ctx
 				);
 
+void		*_philo(
+				t_philosopher *philosopher
+				);
+
 /* ************************************************************************** */
 /*                                                                            */
 /* Main                                                                       */
@@ -72,7 +77,12 @@ int	main(
 		char **argv
 		)
 {
-	t_context	context;
+	static t_context	context = {0};
+	t_philosopher		*philosophers;
+	size_t				i;
+	size_t				j;
+	struct timeval		tv;
+	unsigned long		t;
 
 	if (argc < 5)
 		return (dprintf(STDERR_FILENO, ERR_NEA "\n", *argv), 1);
@@ -87,6 +97,55 @@ int	main(
 	printf("max_eating       : %lu\n", context.settings.max_eating);
 	if (_initialize_context(&context))
 		return (1);
+	philosophers = (t_philosopher *)calloc(context.settings.philosopher_count,
+			sizeof(t_philosopher));
+	if (philosophers == NULL)
+		return (_cleanup_context(&context), 1);
+	i = 0;
+	while (i < context.settings.philosopher_count)
+	{
+		philosophers[i].id = i;
+		philosophers[i].context = &context;
+		philosophers[i].status = ACTION_TAKE;
+		philosophers[i].left_fork = &context.forks[i];
+		philosophers[i].right_fork = &context.forks[(i + 1) % context.settings.philosopher_count];
+		gettimeofday(&tv, NULL);
+		philosophers[i].last_time_eaten = tv.tv_usec;
+		if (pthread_mutex_init(&philosophers[i].last_time_eaten_mutex, NULL) == 0)
+		{
+			if (pthread_create(&philosophers[i].thread, NULL, (void *(*)(void *))_philo, &philosophers[i]) == 0)
+			{
+				++i;
+				continue ;
+			}
+			pthread_mutex_destroy(&philosophers[i].last_time_eaten_mutex);
+		}
+		while (i--)
+		{
+			pthread_join(philosophers[i].thread, NULL);
+			pthread_mutex_destroy(&philosophers[i].last_time_eaten_mutex);
+		}
+		return (_cleanup_context(&context), 1);
+	}
+	printf("checker\n");
+	while (context_is_running(&context))
+	{
+		j = 0;
+		while (j < context.settings.philosopher_count)
+		{
+			pthread_mutex_lock(&philosophers[j].last_time_eaten_mutex);
+			t = philosophers[j].last_time_eaten;
+			pthread_mutex_unlock(&philosophers[j++].last_time_eaten_mutex);
+			gettimeofday(&tv, NULL);
+			tv.tv_usec -= t;
+			if (tv.tv_usec < (suseconds_t)context.settings.death_timer)
+				continue ;
+			context_kill_simulation(&context);
+			break ;
+		}
+	}
+	while (i--)
+		pthread_join(philosophers[i].thread, NULL);
 	return (_cleanup_context(&context), EXIT_SUCCESS);
 }
 
@@ -123,14 +182,13 @@ static bool	_initialize_context(
 {
 	size_t	i;
 
-	memset(ctx, 0, sizeof(t_context));
 	if (pthread_mutex_init(&ctx->mutexes.logging, NULL) != 0)
 		return (true);
 	if (pthread_mutex_init(&ctx->mutexes.simulation_running, NULL) != 0)
 		return (pthread_mutex_destroy(&ctx->mutexes.logging), true);
 	ctx->mutexes._are_initialized = true;
 	ctx->forks = (pthread_mutex_t *)malloc(
-			ctx->settings.philosopher_count * sizeof(pthread_mutex_t *));
+			ctx->settings.philosopher_count * sizeof(pthread_mutex_t));
 	if (ctx->forks == NULL)
 		return (_cleanup_context(ctx), true);
 	i = 0;
@@ -144,6 +202,7 @@ static bool	_initialize_context(
 		ctx->forks = NULL;
 		return (_cleanup_context(ctx), true);
 	}
+	ctx->is_simulation_running = true;
 	return (false);
 }
 
@@ -163,4 +222,96 @@ static void	_cleanup_context(
 	while (i < ctx->settings.philosopher_count)
 		pthread_mutex_destroy(&ctx->forks[i++]);
 	free(ctx->forks);
+}
+
+unsigned long	_philo_get_last_time_eaten(
+					t_philosopher *philo
+					)
+{
+	unsigned long	t;
+
+	pthread_mutex_lock(&philo->last_time_eaten_mutex);
+	t = philo->last_time_eaten;
+	pthread_mutex_unlock(&philo->last_time_eaten_mutex);
+	return (t);
+}
+
+int	_wait(
+		t_philosopher *philo,
+		suseconds_t time
+		)
+{
+	t_context	*ctx;
+
+	ctx = philo->context;
+	while (time > 10)
+	{
+		usleep(10);
+		if (!context_is_running(ctx))
+			return (1);
+		if (_philo_get_last_time_eaten(philo) >= ctx->settings.eating_timer)
+			return (context_kill_simulation(ctx), 1);
+		time -= 10;
+	}
+	if (time > 0)
+	{
+		usleep(time);
+		if (!context_is_running(ctx))
+			return (1);
+		if (_philo_get_last_time_eaten(philo) >= ctx->settings.eating_timer)
+			return (context_kill_simulation(ctx), 1);
+	}
+	return (0);
+}
+
+void	*_philo(
+			t_philosopher *philosopher
+			)
+{
+	struct timeval	tv;
+	int				status;
+
+	while (context_is_running(philosopher->context))
+	{
+		gettimeofday(&tv, NULL);
+		if (philosopher->status == ACTION_SLEEPING)
+		{
+			log_action(philosopher->context, philosopher, tv.tv_usec);
+			if (_wait(philosopher, philosopher->context->settings.sleeping_timer))
+				break ;
+			philosopher->status = ACTION_THINKING;
+		}
+		else if (philosopher->status == ACTION_THINKING)
+		{
+			log_action(philosopher->context, philosopher, tv.tv_usec);
+			philosopher->status = ACTION_TAKE;
+		}
+		else if (philosopher->status == ACTION_TAKE)
+		{
+			pthread_mutex_lock(philosopher->left_fork);
+			if (!context_is_running(philosopher->context))
+				break ;
+			pthread_mutex_lock(philosopher->right_fork);
+			if (!context_is_running(philosopher->context))
+				break ;
+			gettimeofday(&tv, NULL);
+			log_action(philosopher->context, philosopher, tv.tv_usec);
+			philosopher->status = ACTION_EATING;
+			pthread_mutex_lock(&philosopher->last_time_eaten_mutex);
+			gettimeofday(&tv, NULL);
+			philosopher->last_time_eaten = tv.tv_usec;
+			pthread_mutex_unlock(&philosopher->last_time_eaten_mutex);
+			log_action(philosopher->context, philosopher, tv.tv_usec);
+			status = _wait(philosopher, philosopher->context->settings.eating_timer);
+			pthread_mutex_unlock(philosopher->right_fork);
+			pthread_mutex_unlock(philosopher->left_fork);
+			if (status)
+				break ;
+		}
+	}
+	philosopher->status = ACTION_DEATH;
+	gettimeofday(&tv, NULL);
+	log_action(philosopher->context, philosopher, tv.tv_usec);
+	printf("%u exit\n", philosopher->id);
+	return (NULL);
 }
