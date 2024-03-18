@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: amassias <amassias@student.42.fr>          +#+  +:+       +#+        */
+/*   By: amassias <amassias@student.42lehavre.fr    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/02 17:30:38 by amassias          #+#    #+#             */
-/*   Updated: 2024/03/06 18:17:54 by amassias         ###   ########.fr       */
+/*   Updated: 2024/03/18 16:09:19 by amassias         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,7 +97,7 @@ static bool	_initialize_context(
 			ctx->settings.philosopher_count * sizeof(pthread_mutex_t *));
 	if (ctx->forks == NULL)
 		return (_cleanup_context(ctx), true);
-	i ^= i;
+	i = 0;
 	while (i < ctx->settings.philosopher_count)
 	{
 		if (pthread_mutex_init(&ctx->forks[i++], NULL) == 0)
@@ -123,7 +123,7 @@ static void	_cleanup_context(
 	pthread_mutex_destroy(&ctx->mutexes.simulation_running);
 	if (ctx->forks == NULL)
 		return ;
-	i ^= i;
+	i = 0;
 	while (i < ctx->settings.philosopher_count)
 		pthread_mutex_destroy(&ctx->forks[i++]);
 	free(ctx->forks);
