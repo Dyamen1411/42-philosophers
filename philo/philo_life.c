@@ -1,24 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utils.h                                            :+:      :+:    :+:   */
+/*   philo_life.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: amassias <amassias@student.42lehavre.fr    +#+  +:+       +#+        */
+/*   By: amassias <amassias@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/03/04 17:34:28 by amassias          #+#    #+#             */
-/*   Updated: 2024/03/18 16:34:18 by amassias         ###   ########.fr       */
+/*   Created: 2024/01/13 19:32:20 by amassias          #+#    #+#             */
+/*   Updated: 2024/01/13 22:17:00 by amassias         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 /**
- * @file utils.h
+ * @file philo_life.c
  * @author Antoine Massias (amassias@student.42lehavre.fr)
- * @date 2024-03-04
+ * @date 2024-01-13
  * @copyright Copyright (c) 2024
  */
-
-#ifndef UTILS_H
-# define UTILS_H
 
 /* ************************************************************************** */
 /*                                                                            */
@@ -26,26 +23,33 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-# include <stdbool.h>
+#include "philo.h"
+
+#include <unistd.h>
 
 /* ************************************************************************** */
 /*                                                                            */
-/* Header protoypes                                                           */
+/* Header implementation                                                      */
 /*                                                                            */
 /* ************************************************************************** */
 
-int		is_space(int c);
+void	*philo_life(
+			void *p
+			)
+{
+	t_philo *const		philo = p;
+	t_philo_ctx *const	ctx = philo->ctx;
 
-int		is_digit(int c);
-
-bool	read_unsinged_int(
-			char *str,
-			unsigned int *v
-			);
-
-bool	read_unsigned_long(
-			char *str,
-			unsigned long *v
-			);
-
-#endif
+	if (philo->id % 2)
+		custom_sleep(philo, 4);
+	while (philo_is_running(ctx))
+	{
+		philo_eat(philo);
+		if (!philo_is_running(philo->ctx))
+			break ;
+		philo_log(ctx, philo->id, ACTION_SLEEPING);
+		custom_sleep(philo, ctx->t_tosleep);
+		philo_log(ctx, philo->id, ACTION_THINKING);
+	}
+	return (NULL);
+}

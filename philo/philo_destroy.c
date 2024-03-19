@@ -1,19 +1,19 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   logging.c                                          :+:      :+:    :+:   */
+/*   philo_destroy.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: amassias <amassias@student.42lehavre.fr    +#+  +:+       +#+        */
+/*   By: amassias <amassias@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/03/02 17:47:27 by amassias          #+#    #+#             */
-/*   Updated: 2024/03/18 16:32:32 by amassias         ###   ########.fr       */
+/*   Created: 2024/01/13 18:35:28 by amassias          #+#    #+#             */
+/*   Updated: 2024/01/13 22:02:08 by amassias         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 /**
- * @file logging.c
+ * @file philo_destroy.c
  * @author Antoine Massias (amassias@student.42lehavre.fr)
- * @date 2024-03-02
+ * @date 2024-01-13
  * @copyright Copyright (c) 2024
  */
 
@@ -23,23 +23,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "philosophers.h"
-
-#include <stdio.h>
-
-/* ************************************************************************** */
-/*                                                                            */
-/* Global variables                                                           */
-/*                                                                            */
-/* ************************************************************************** */
-
-const char	*g_messages[] = {
-[ACTION_TAKE] = "has taken a fork",
-[ACTION_EATING] = "is eating",
-[ACTION_SLEEPING] = "is sleeping",
-[ACTION_THINKING] = "is thinking",
-[ACTION_DEATH] = "died"
-};
+#include "philo.h"
 
 /* ************************************************************************** */
 /*                                                                            */
@@ -47,16 +31,29 @@ const char	*g_messages[] = {
 /*                                                                            */
 /* ************************************************************************** */
 
-void	log_action(
-			t_context *ctx,
-			t_philosopher *philosopher,
-			unsigned long timestamp
+void	philo_destroy(
+			t_philo_ctx *ctx
 			)
 {
-	const unsigned int	id = philosopher->id;
-	const t_action		status = philosopher->status;
+	size_t	k;
 
-	pthread_mutex_lock(&ctx->mutexes.logging);
-	printf("%lu %u %s\n", timestamp, id, g_messages[status]);
-	pthread_mutex_unlock(&ctx->mutexes.logging);
+	if (ctx->forks != NULL)
+	{
+		k = 0;
+		while (k < ctx->nb)
+			pthread_mutex_destroy(&ctx->forks[k++]);
+		free(ctx->forks);
+	}
+	if (ctx->philos != NULL)
+	{
+		k = 0;
+		while (k < ctx->nb)
+		{
+			pthread_mutex_destroy(&ctx->philos[k].eating);
+			pthread_mutex_destroy(&ctx->philos[k].eaten);
+			++k;
+		}
+		free(ctx->philos);
+	}
+	pthread_mutex_destroy(&ctx->mis_running);
 }

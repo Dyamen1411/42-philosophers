@@ -1,19 +1,19 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   chars.c                                            :+:      :+:    :+:   */
+/*   custom_sleep.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: amassias <amassias@student.42lehavre.fr    +#+  +:+       +#+        */
+/*   By: amassias <amassias@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/03/04 17:37:29 by amassias          #+#    #+#             */
-/*   Updated: 2024/03/18 16:33:18 by amassias         ###   ########.fr       */
+/*   Created: 2024/01/13 19:54:20 by amassias          #+#    #+#             */
+/*   Updated: 2024/01/13 22:03:25 by amassias         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 /**
- * @file chars.c
+ * @file custom_sleep.c
  * @author Antoine Massias (amassias@student.42lehavre.fr)
- * @date 2024-03-04
+ * @date 2024-01-13
  * @copyright Copyright (c) 2024
  */
 
@@ -23,7 +23,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "utils.h"
+#include <unistd.h>
+#include "philo.h"
 
 /* ************************************************************************** */
 /*                                                                            */
@@ -31,12 +32,18 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-int	is_space(int c)
+void	custom_sleep(
+			t_philo *philo,
+			time_t duration
+			)
 {
-	return (c == '\f' || c == '\n' || c == '\r' || c == '\t' || c == '\v');
-}
+	time_t	now;
 
-int	is_digit(int c)
-{
-	return ('0' <= c && c <= '9');
+	now = ft_time_ms();
+	while (now + duration > ft_time_ms())
+	{
+		if (!philo_is_running(philo->ctx))
+			break ;
+		usleep(((t_philo_ctx *)philo->ctx)->nb * 2);
+	}
 }

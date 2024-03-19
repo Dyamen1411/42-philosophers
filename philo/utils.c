@@ -1,19 +1,19 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   readers.c                                          :+:      :+:    :+:   */
+/*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: amassias <amassias@student.42lehavre.fr    +#+  +:+       +#+        */
+/*   By: amassias <amassias@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/03/04 17:34:20 by amassias          #+#    #+#             */
-/*   Updated: 2024/03/18 16:33:39 by amassias         ###   ########.fr       */
+/*   Created: 2024/01/09 12:53:55 by amassias          #+#    #+#             */
+/*   Updated: 2024/01/13 19:11:37 by amassias         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 /**
- * @file readers.c
+ * @file utils.c
  * @author Antoine Massias (amassias@student.42lehavre.fr)
- * @date 2024-03-04
+ * @date 2024-01-09
  * @copyright Copyright (c) 2024
  */
 
@@ -23,7 +23,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "utils.h"
+#include "philo.h"
 
 /* ************************************************************************** */
 /*                                                                            */
@@ -31,56 +31,53 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-bool	read_unsinged_int(
-			char *str,
-			unsigned int *v
-			)
+int	ft_atot(
+		const char *s,
+		time_t *t
+		)
 {
-	bool			ok;
-	unsigned int	tmp;
-	unsigned int	digit;
+	time_t	k;
 
-	ok = false;
-	while (is_space(*str))
-		++str;
-	*v = 0;
-	while (is_digit(*str))
+	if (*s == '\0')
+		return (0);
+	k = 0;
+	while (*s >= '0' && *s <= '9')
 	{
-		digit = *str++ - '0';
-		tmp = 10 * *v + digit;
-		if (tmp < *v || (tmp - digit) / 10 != *v)
-			return (true);
-		*v = tmp;
-		ok = true;
+		k *= 10;
+		k += *s - '0';
+		++s;
 	}
-	while (is_space(*str))
-		++str;
-	return (*str != '\0' || !ok);
+	*t = k;
+	return (*s == '\0');
 }
 
-bool	read_unsigned_long(
-			char *str,
-			unsigned long *v
-			)
+int	ft_atoui(
+		const char *s,
+		unsigned int *n
+		)
 {
-	bool			ok;
-	unsigned long	tmp;
-	unsigned int	digit;
+	unsigned int	k;
 
-	ok = false;
-	while (is_space(*str))
-		++str;
-	*v = 0;
-	while (is_digit(*str))
+	if (*s == '\0')
+		return (0);
+	k = 0;
+	while (*s >= '0' && *s <= '9')
 	{
-		digit = *str++ - '0';
-		tmp = 10 * *v + digit;
-		if (tmp < *v || (tmp - digit) / 10 != *v)
-			return (true);
-		*v = tmp;
-		ok = true;
+		k *= 10;
+		k += *s - '0';
+		++s;
 	}
-	while (is_space(*str))
-		++str;
-	return (*str != '\0' || !ok);
+	*n = k;
+	return (*s == '\0');
+}
+
+time_t	ft_time_ms(void)
+{
+	static time_t	initime = -1;
+	struct timeval	t;
+
+	gettimeofday(&t, NULL);
+	if (initime == -1)
+		initime = (t.tv_sec * 1000 + t.tv_usec / 1000);
+	return ((t.tv_sec * 1000 + t.tv_usec / 1000) - initime);
 }
