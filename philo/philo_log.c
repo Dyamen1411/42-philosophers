@@ -6,7 +6,7 @@
 /*   By: amassias <amassias@student.42lehavre.fr    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/09 13:03:50 by amassias          #+#    #+#             */
-/*   Updated: 2024/03/19 16:49:06 by amassias         ###   ########.fr       */
+/*   Updated: 2024/03/19 17:56:03 by amassias         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,11 +59,11 @@ void	philo_log(
 	pthread_mutex_unlock(&mut);
 }
 
-int	philo_is_running(
-		t_philo_ctx *ctx
-		)
+bool	philo_is_running(
+			t_philo_ctx *ctx
+			)
 {
-	int	is_running;
+	bool	is_running;
 
 	pthread_mutex_lock(&ctx->mutex_is_running);
 	is_running = ctx->is_running;
@@ -73,7 +73,7 @@ int	philo_is_running(
 
 void	philo_set_running(
 			t_philo_ctx *ctx,
-			int running
+			bool running
 			)
 {
 	pthread_mutex_lock(&ctx->mutex_is_running);

@@ -6,7 +6,7 @@
 /*   By: amassias <amassias@student.42lehavre.fr    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/09 12:21:18 by amassias          #+#    #+#             */
-/*   Updated: 2024/03/19 17:18:16 by amassias         ###   ########.fr       */
+/*   Updated: 2024/03/19 17:55:45 by amassias         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,7 +101,7 @@ struct s_philo_ctx
 {
 	char			*program_name;
 	unsigned int	philo_count;
-	int				is_running;
+	bool			is_running;
 	pthread_mutex_t	mutex_is_running;
 	struct s_timers
 	{
@@ -160,13 +160,13 @@ void			philo_eat(
 					t_philo *philo
 					);
 
-int				philo_is_running(
+bool			philo_is_running(
 					t_philo_ctx *ctx
 					);
 
 void			philo_set_running(
 					t_philo_ctx *ctx,
-					int running
+					bool running
 					);
 
 noreturn void	error(

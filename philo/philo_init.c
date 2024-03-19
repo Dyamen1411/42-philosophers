@@ -6,7 +6,7 @@
 /*   By: amassias <amassias@student.42lehavre.fr    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/09 13:00:24 by amassias          #+#    #+#             */
-/*   Updated: 2024/03/19 17:27:12 by amassias         ###   ########.fr       */
+/*   Updated: 2024/03/19 17:56:56 by amassias         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,7 @@ void	philo_init_args(
 
 	ctx->program_name = argv[PROG_NAME];
 	ctx->philos = NULL;
-	ctx->is_running = 0;
+	ctx->is_running = false;
 	ctx->forks = NULL;
 	if (!ft_atoui(argv[PROG_PHILO_COUNT], &ctx->philo_count))
 		error(ctx, ARG1 " " ERR_NAT_INT);

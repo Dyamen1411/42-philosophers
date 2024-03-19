@@ -6,7 +6,7 @@
 /*   By: amassias <amassias@student.42lehavre.fr    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/13 19:29:32 by amassias          #+#    #+#             */
-/*   Updated: 2024/03/19 17:29:36 by amassias         ###   ########.fr       */
+/*   Updated: 2024/03/19 17:57:27 by amassias         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ void	philo_start(
 {
 	size_t	i;
 
-	ctx->is_running = 1;
+	ctx->is_running = true;
 	i = 0;
 	while (i < ctx->philo_count)
 	{
@@ -71,7 +71,7 @@ void	philo_start(
 		if (pthread_create(&ctx->philos[i].thread_id, NULL,
 				philo_life, &ctx->philos[i]))
 		{
-			philo_set_running(ctx, 0);
+			philo_set_running(ctx, false);
 			_philo_wait_thread(ctx);
 			error(ctx, ERR_THREAD_INIT);
 		}
@@ -121,7 +121,7 @@ static void	_philo_check_each(
 		++i;
 	}
 	if (i == ctx->philo_count)
-		philo_set_running(ctx, 0);
+		philo_set_running(ctx, false);
 }
 
 static void	_philo_died(
@@ -140,7 +140,7 @@ static void	_philo_died(
 			time_since_eaten = ft_time_ms() - ctx->philos[i].last_time_eaten;
 			if (time_since_eaten >= ctx->timers.death)
 			{
-				philo_set_running(ctx, 0);
+				philo_set_running(ctx, false);
 				philo_log(ctx, i, ACTION_DIED);
 				pthread_mutex_unlock(&ctx->philos[i].mutex_eating);
 				break ;
