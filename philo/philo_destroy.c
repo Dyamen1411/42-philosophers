@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo_destroy.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: amassias <amassias@student.42.fr>          +#+  +:+       +#+        */
+/*   By: amassias <amassias@student.42lehavre.fr    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/13 18:35:28 by amassias          #+#    #+#             */
-/*   Updated: 2024/01/13 22:02:08 by amassias         ###   ########.fr       */
+/*   Updated: 2024/03/19 17:23:12 by amassias         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,25 +35,23 @@ void	philo_destroy(
 			t_philo_ctx *ctx
 			)
 {
-	size_t	k;
+	size_t	i;
 
-	if (ctx->forks != NULL)
+	pthread_mutex_destroy(&ctx->mutex_is_running);
+	if (ctx->forks == NULL)
+		return ;
+	i = 0;
+	while (i < ctx->philo_count)
+		pthread_mutex_destroy(&ctx->forks[i++]);
+	free(ctx->forks);
+	if (ctx->philos == NULL)
+		return ;
+	i = 0;
+	while (i < ctx->philo_count)
 	{
-		k = 0;
-		while (k < ctx->nb)
-			pthread_mutex_destroy(&ctx->forks[k++]);
-		free(ctx->forks);
+		pthread_mutex_destroy(&ctx->philos[i].mutex_eating);
+		pthread_mutex_destroy(&ctx->philos[i].mutex_eaten);
+		++i;
 	}
-	if (ctx->philos != NULL)
-	{
-		k = 0;
-		while (k < ctx->nb)
-		{
-			pthread_mutex_destroy(&ctx->philos[k].eating);
-			pthread_mutex_destroy(&ctx->philos[k].eaten);
-			++k;
-		}
-		free(ctx->philos);
-	}
-	pthread_mutex_destroy(&ctx->mis_running);
+	free(ctx->philos);
 }

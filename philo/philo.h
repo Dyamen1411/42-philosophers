@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: amassias <amassias@student.42.fr>          +#+  +:+       +#+        */
+/*   By: amassias <amassias@student.42lehavre.fr    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/09 12:21:18 by amassias          #+#    #+#             */
-/*   Updated: 2024/01/13 22:11:42 by amassias         ###   ########.fr       */
+/*   Updated: 2024/03/19 17:18:16 by amassias         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,14 +26,15 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-# include <string.h>
-# include <stdlib.h>
-# include <stdio.h>
-# include <unistd.h>
-# include <stdnoreturn.h>
-# include <unistd.h>
-# include <sys/time.h>
 # include <pthread.h>
+# include <stdbool.h>
+# include <stdio.h>
+# include <stdlib.h>
+# include <stdnoreturn.h>
+# include <string.h>
+# include <sys/time.h>
+# include <unistd.h>
+# include <unistd.h>
 
 /* ************************************************************************** */
 /*                                                                            */
@@ -58,13 +59,13 @@
 enum e_args
 {
 	PROG_NAME,
-	PROG_NBPHILO,
-	PROG_TTODIE,
-	PROG_TTOEAT,
-	PROG_TTOSLEEP,
-	PROG_TTOEACHP,
-	PROG__MIN=PROG_TTOSLEEP + 1,
-	PROG__MAX=PROG_TTOEACHP + 1,
+	PROG_PHILO_COUNT,
+	PROG_DEATH_TIMER,
+	PROG_EAT_TIMER,
+	PROG_SLEEP_TIMER,
+	PROG_EACHP_TIMER,
+	PROG__MIN=PROG_SLEEP_TIMER + 1,
+	PROG__MAX=PROG_EACHP_TIMER + 1,
 };
 
 enum e_action
@@ -86,26 +87,29 @@ struct s_philo
 {
 	pthread_t		thread_id;
 	int				id;
-	int				dead;
-	unsigned int	nb_ate;
-	void			*ctx;
-	time_t			last_eat;
-	pthread_mutex_t	eating;
-	pthread_mutex_t	eaten;
+	bool			is_dead;
+	unsigned int	times_eaten;
+	time_t			last_time_eaten;
+	pthread_mutex_t	mutex_eating;
+	pthread_mutex_t	mutex_eaten;
 	pthread_mutex_t	*l_fork;
 	pthread_mutex_t	*r_fork;
+	void			*ctx;
 };
 
 struct s_philo_ctx
 {
-	char			*pn;
-	unsigned int	nb;
+	char			*program_name;
+	unsigned int	philo_count;
 	int				is_running;
-	pthread_mutex_t	mis_running;
-	time_t			t_todie;
-	time_t			t_toeat;
-	time_t			t_tosleep;
-	unsigned int	t_toeach;
+	pthread_mutex_t	mutex_is_running;
+	struct s_timers
+	{
+		time_t			death;
+		time_t			eat;
+		time_t			sleep;
+		unsigned int	each;
+	}				timers;
 	struct s_philo	*philos;
 	pthread_mutex_t	*forks;
 };

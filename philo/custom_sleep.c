@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   custom_sleep.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: amassias <amassias@student.42.fr>          +#+  +:+       +#+        */
+/*   By: amassias <amassias@student.42lehavre.fr    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/13 19:54:20 by amassias          #+#    #+#             */
-/*   Updated: 2024/01/13 22:03:25 by amassias         ###   ########.fr       */
+/*   Updated: 2024/03/19 16:48:40 by amassias         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,6 @@ void	custom_sleep(
 	{
 		if (!philo_is_running(philo->ctx))
 			break ;
-		usleep(((t_philo_ctx *)philo->ctx)->nb * 2);
+		usleep(((t_philo_ctx *)philo->ctx)->philo_count * 2);
 	}
 }

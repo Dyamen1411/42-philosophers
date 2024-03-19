@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo_start.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: amassias <amassias@student.42.fr>          +#+  +:+       +#+        */
+/*   By: amassias <amassias@student.42lehavre.fr    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/13 19:29:32 by amassias          #+#    #+#             */
-/*   Updated: 2024/02/16 17:07:41 by amassias         ###   ########.fr       */
+/*   Updated: 2024/03/19 17:29:36 by amassias         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,22 +61,22 @@ void	philo_start(
 			t_philo_ctx *ctx
 			)
 {
-	size_t	k;
+	size_t	i;
 
 	ctx->is_running = 1;
-	k = 0;
-	while (k < ctx->nb)
+	i = 0;
+	while (i < ctx->philo_count)
 	{
-		ctx->philos[k].last_eat = ft_time_ms();
-		if (pthread_create(&ctx->philos[k].thread_id, NULL,
-				philo_life, &ctx->philos[k]))
+		ctx->philos[i].last_time_eaten = ft_time_ms();
+		if (pthread_create(&ctx->philos[i].thread_id, NULL,
+				philo_life, &ctx->philos[i]))
 		{
 			philo_set_running(ctx, 0);
 			_philo_wait_thread(ctx);
 			error(ctx, ERR_THREAD_INIT);
 		}
 		usleep(500);
-		++k;
+		++i;
 	}
 	_philo_died(ctx);
 	_philo_wait_thread(ctx);
@@ -92,14 +92,14 @@ static void	_philo_wait_thread(
 				t_philo_ctx *ctx
 				)
 {
-	size_t	k;
+	size_t	i;
 
-	k = 0;
-	while (k < ctx->nb)
+	i = 0;
+	while (i < ctx->philo_count)
 	{
-		if (ctx->philos[k].thread_id != 0)
-			pthread_join(ctx->philos[k].thread_id, NULL);
-		++k;
+		if (ctx->philos[i].thread_id != 0)
+			pthread_join(ctx->philos[i].thread_id, NULL);
+		++i;
 	}
 }
 
@@ -107,20 +107,20 @@ static void	_philo_check_each(
 				t_philo_ctx *ctx
 				)
 {
-	size_t			k;
+	size_t			i;
 	unsigned int	nb_ate;
 
-	k = 0;
-	while (k < ctx->nb && ctx->t_toeach != __INT_MAX__)
+	i = 0;
+	while (i < ctx->philo_count && ctx->timers.each != __INT_MAX__)
 	{
-		pthread_mutex_lock(&ctx->philos[k].eaten);
-		nb_ate = ctx->philos[k].nb_ate;
-		pthread_mutex_unlock(&ctx->philos[k].eaten);
-		if (nb_ate < (unsigned int) ctx->t_toeach)
+		pthread_mutex_lock(&ctx->philos[i].mutex_eaten);
+		nb_ate = ctx->philos[i].times_eaten;
+		pthread_mutex_unlock(&ctx->philos[i].mutex_eaten);
+		if (nb_ate < (unsigned int) ctx->timers.each)
 			break ;
-		++k;
+		++i;
 	}
-	if (k == ctx->nb)
+	if (i == ctx->philo_count)
 		philo_set_running(ctx, 0);
 }
 
@@ -128,23 +128,25 @@ static void	_philo_died(
 				t_philo_ctx *ctx
 				)
 {
-	size_t	k;
+	size_t	i;
+	time_t	time_since_eaten;
 
 	while (philo_is_running(ctx))
 	{
-		k = 0;
-		while (k < ctx->nb)
+		i = 0;
+		while (i < ctx->philo_count)
 		{
-			pthread_mutex_lock(&ctx->philos[k].eating);
-			if (ft_time_ms() - ctx->philos[k].last_eat >= ctx->t_todie)
+			pthread_mutex_lock(&ctx->philos[i].mutex_eating);
+			time_since_eaten = ft_time_ms() - ctx->philos[i].last_time_eaten;
+			if (time_since_eaten >= ctx->timers.death)
 			{
 				philo_set_running(ctx, 0);
-				philo_log(ctx, k, ACTION_DIED);
-				pthread_mutex_unlock(&ctx->philos[k].eating);
+				philo_log(ctx, i, ACTION_DIED);
+				pthread_mutex_unlock(&ctx->philos[i].mutex_eating);
 				break ;
 			}
-			pthread_mutex_unlock(&ctx->philos[k].eating);
-			++k;
+			pthread_mutex_unlock(&ctx->philos[i].mutex_eating);
+			++i;
 		}
 		_philo_check_each(ctx);
 	}

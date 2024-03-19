@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   error.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: amassias <amassias@student.42.fr>          +#+  +:+       +#+        */
+/*   By: amassias <amassias@student.42lehavre.fr    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 10:36:02 by amassias          #+#    #+#             */
-/*   Updated: 2024/01/13 18:45:46 by amassias         ###   ########.fr       */
+/*   Updated: 2024/03/19 16:48:09 by amassias         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ void	error(
 			const char *message
 			)
 {
-	dprintf(STDERR_FILENO, "%s: %s\n", ctx->pn, message);
+	dprintf(STDERR_FILENO, "%s: %s\n", ctx->program_name, message);
 	philo_destroy(ctx);
 	exit(EXIT_FAILURE);
 }

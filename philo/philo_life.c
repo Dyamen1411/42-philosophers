@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo_life.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: amassias <amassias@student.42.fr>          +#+  +:+       +#+        */
+/*   By: amassias <amassias@student.42lehavre.fr    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/13 19:32:20 by amassias          #+#    #+#             */
-/*   Updated: 2024/01/13 22:17:00 by amassias         ###   ########.fr       */
+/*   Updated: 2024/03/19 17:13:25 by amassias         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ void	*philo_life(
 		if (!philo_is_running(philo->ctx))
 			break ;
 		philo_log(ctx, philo->id, ACTION_SLEEPING);
-		custom_sleep(philo, ctx->t_tosleep);
+		custom_sleep(philo, ctx->timers.sleep);
 		philo_log(ctx, philo->id, ACTION_THINKING);
 	}
 	return (NULL);

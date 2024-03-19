@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo_eat.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: amassias <amassias@student.42.fr>          +#+  +:+       +#+        */
+/*   By: amassias <amassias@student.42lehavre.fr    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/13 19:23:46 by amassias          #+#    #+#             */
-/*   Updated: 2024/01/13 22:46:27 by amassias         ###   ########.fr       */
+/*   Updated: 2024/03/19 17:24:44 by amassias         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ static void	_philo_eat_take_lfork(
 				t_philo *philo
 				);
 
-static void	_philo_eat_take_fork(
+static void	_philo_eat_take_forks(
 				t_philo *philo
 				);
 
@@ -53,9 +53,11 @@ static void	_philo_eat_take_fork(
 /*                                                                            */
 /* ************************************************************************** */
 
-void	philo_eat(t_philo *philo)
+void	philo_eat(
+			t_philo *philo
+			)
 {
-	_philo_eat_take_fork(philo);
+	_philo_eat_take_forks(philo);
 	if (philo->r_fork == philo->l_fork)
 	{
 		while (philo_is_running(philo->ctx))
@@ -63,14 +65,14 @@ void	philo_eat(t_philo *philo)
 		pthread_mutex_unlock(philo->l_fork);
 		return ;
 	}
-	pthread_mutex_lock(&philo->eating);
+	pthread_mutex_lock(&philo->mutex_eating);
 	philo_log(philo->ctx, philo->id, ACTION_EATING);
-	philo->last_eat = ft_time_ms();
-	pthread_mutex_unlock(&philo->eating);
-	custom_sleep(philo, ((t_philo_ctx *)philo->ctx)->t_toeat);
-	pthread_mutex_lock(&philo->eaten);
-	++philo->nb_ate;
-	pthread_mutex_unlock(&philo->eaten);
+	philo->last_time_eaten = ft_time_ms();
+	pthread_mutex_unlock(&philo->mutex_eating);
+	custom_sleep(philo, ((t_philo_ctx *)philo->ctx)->timers.eat);
+	pthread_mutex_lock(&philo->mutex_eaten);
+	++philo->times_eaten;
+	pthread_mutex_unlock(&philo->mutex_eaten);
 	pthread_mutex_unlock(philo->l_fork);
 	pthread_mutex_unlock(philo->r_fork);
 }
@@ -81,19 +83,25 @@ void	philo_eat(t_philo *philo)
 /*                                                                            */
 /* ************************************************************************** */
 
-static void	_philo_eat_take_rfork(t_philo *philo)
+static void	_philo_eat_take_rfork(
+				t_philo *philo
+				)
 {
 	pthread_mutex_lock(philo->r_fork);
 	philo_log(philo->ctx, philo->id, ACTION_FORK_TAKEN);
 }
 
-static void	_philo_eat_take_lfork(t_philo *philo)
+static void	_philo_eat_take_lfork(
+				t_philo *philo
+				)
 {
 	pthread_mutex_lock(philo->l_fork);
 	philo_log(philo->ctx, philo->id, ACTION_FORK_TAKEN);
 }
 
-static void	_philo_eat_take_fork(t_philo *philo)
+static void	_philo_eat_take_forks(
+				t_philo *philo
+				)
 {
 	const int	odd = philo->id % 2;
 

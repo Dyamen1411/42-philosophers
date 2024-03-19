@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: amassias <amassias@student.42.fr>          +#+  +:+       +#+         #
+#    By: amassias <amassias@student.42lehavre.fr    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/04/06 23:28:51 by amassias          #+#    #+#              #
-#    Updated: 2024/01/13 20:36:21 by amassias         ###   ########.fr        #
+#    Updated: 2024/03/19 17:10:49 by amassias         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,10 +14,12 @@ COL_RED		=	\x1b[1;31m
 COL_GREEN	=	\x1b[1;32m
 COL_RESET	=	\x1b[1;0m
 
-SRC_DIR := ./
-OBJ_DIR	:=	build
+RM			=	rm -f
+ECHO		=	/usr/bin/echo
 
-CC			=	cc
+SRC_DIR		=	.
+OBJ_DIR		=	build
+
 CFLAGS		=	-Wall -Werror -Wextra -g3
 LFLAGS		=	-pthread
 
@@ -46,10 +48,10 @@ all: $(NAME)
 bonus: all
 
 clean:
-	rm -rf $(OBJS)
+	$(RM) -r $(OBJS)
 
 fclean: clean
-	rm -f $(NAME)
+	$(RM) -f $(NAME)
 
 re: fclean all
 
@@ -60,6 +62,6 @@ $(NAME): $(OBJS)
 	$(CC) -c $< -o $@ -I. $(CFLAGS)
 
 norminette:
-	@norminette | grep -Ev '^Notice:|OK!$$'	\
-	&& echo -e '$(COL_RED)Norminette KO !$(COL_RESET)'	\
-	|| echo -e '$(COL_GREEN)Norminette OK !$(COL_RESET)'
+	@norminette | grep -Ev '^Notice:|OK!$$'					\
+	&& $(ECHO) -e "$(COL_RED)Norminette KO !$(COL_RESET)"	\
+	|| $(ECHO) -e "$(COL_GREEN)Norminette OK !$(COL_RESET)"

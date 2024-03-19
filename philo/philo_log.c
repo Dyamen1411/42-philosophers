@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo_log.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: amassias <amassias@student.42.fr>          +#+  +:+       +#+        */
+/*   By: amassias <amassias@student.42lehavre.fr    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/09 13:03:50 by amassias          #+#    #+#             */
-/*   Updated: 2024/01/13 22:03:01 by amassias         ###   ########.fr       */
+/*   Updated: 2024/03/19 16:49:06 by amassias         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,9 +65,9 @@ int	philo_is_running(
 {
 	int	is_running;
 
-	pthread_mutex_lock(&ctx->mis_running);
+	pthread_mutex_lock(&ctx->mutex_is_running);
 	is_running = ctx->is_running;
-	pthread_mutex_unlock(&ctx->mis_running);
+	pthread_mutex_unlock(&ctx->mutex_is_running);
 	return (is_running);
 }
 
@@ -76,7 +76,7 @@ void	philo_set_running(
 			int running
 			)
 {
-	pthread_mutex_lock(&ctx->mis_running);
+	pthread_mutex_lock(&ctx->mutex_is_running);
 	ctx->is_running = running;
-	pthread_mutex_unlock(&ctx->mis_running);
+	pthread_mutex_unlock(&ctx->mutex_is_running);
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: amassias <amassias@student.42.fr>          +#+  +:+       +#+        */
+/*   By: amassias <amassias@student.42lehavre.fr    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/09 12:53:55 by amassias          #+#    #+#             */
-/*   Updated: 2024/01/13 19:11:37 by amassias         ###   ########.fr       */
+/*   Updated: 2024/03/19 17:39:11 by amassias         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,57 +27,78 @@
 
 /* ************************************************************************** */
 /*                                                                            */
+/* Helper protoypes                                                           */
+/*                                                                            */
+/* ************************************************************************** */
+
+time_t	_get_current_time(void);
+
+/* ************************************************************************** */
+/*                                                                            */
 /* Header implementation                                                      */
 /*                                                                            */
 /* ************************************************************************** */
 
 int	ft_atot(
-		const char *s,
-		time_t *t
+		const char *str,
+		time_t *time_ptr
 		)
 {
-	time_t	k;
+	time_t	_time;
 
-	if (*s == '\0')
+	if (*str == '\0')
 		return (0);
-	k = 0;
-	while (*s >= '0' && *s <= '9')
+	_time = 0;
+	while (*str >= '0' && *str <= '9')
 	{
-		k *= 10;
-		k += *s - '0';
-		++s;
+		_time *= 10;
+		_time += *str - '0';
+		++str;
 	}
-	*t = k;
-	return (*s == '\0');
+	*time_ptr = _time;
+	return (*str == '\0');
 }
 
 int	ft_atoui(
-		const char *s,
-		unsigned int *n
+		const char *str,
+		unsigned int *value_ptr
 		)
 {
-	unsigned int	k;
+	unsigned int	_value;
 
-	if (*s == '\0')
+	if (*str == '\0')
 		return (0);
-	k = 0;
-	while (*s >= '0' && *s <= '9')
+	_value = 0;
+	while (*str >= '0' && *str <= '9')
 	{
-		k *= 10;
-		k += *s - '0';
-		++s;
+		_value *= 10;
+		_value += *str - '0';
+		++str;
 	}
-	*n = k;
-	return (*s == '\0');
+	*value_ptr = _value;
+	return (*str == '\0');
 }
 
 time_t	ft_time_ms(void)
 {
-	static time_t	initime = -1;
-	struct timeval	t;
+	static time_t	initial_time = -1;
+	const time_t	current_time = _get_current_time();
 
-	gettimeofday(&t, NULL);
-	if (initime == -1)
-		initime = (t.tv_sec * 1000 + t.tv_usec / 1000);
-	return ((t.tv_sec * 1000 + t.tv_usec / 1000) - initime);
+	if (initial_time == -1)
+		initial_time = current_time;
+	return (current_time - initial_time);
+}
+
+/* ************************************************************************** */
+/*                                                                            */
+/* Helper implementation                                                      */
+/*                                                                            */
+/* ************************************************************************** */
+
+time_t	_get_current_time(void)
+{
+	struct timeval	current_time;
+
+	gettimeofday(&current_time, NULL);
+	return (current_time.tv_sec * 1000 + current_time.tv_usec / 1000);
 }

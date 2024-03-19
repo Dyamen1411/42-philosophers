@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo_init.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: amassias <amassias@student.42.fr>          +#+  +:+       +#+        */
+/*   By: amassias <amassias@student.42lehavre.fr    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/09 13:00:24 by amassias          #+#    #+#             */
-/*   Updated: 2024/01/13 21:41:14 by amassias         ###   ########.fr       */
+/*   Updated: 2024/03/19 17:27:12 by amassias         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,25 +62,27 @@ void	philo_init_args(
 			char **argv
 			)
 {
-	ctx->pn = argv[PROG_NAME];
+	unsigned int *const	each_ptr = &ctx->timers.each;
+
+	ctx->program_name = argv[PROG_NAME];
 	ctx->philos = NULL;
 	ctx->is_running = 0;
 	ctx->forks = NULL;
-	if (!ft_atoui(argv[PROG_NBPHILO], &ctx->nb))
+	if (!ft_atoui(argv[PROG_PHILO_COUNT], &ctx->philo_count))
 		error(ctx, ARG1 " " ERR_NAT_INT);
-	if (!ft_atot(argv[PROG_TTODIE], &ctx->t_todie))
+	if (!ft_atot(argv[PROG_DEATH_TIMER], &ctx->timers.death))
 		error(ctx, ARG2 " " ERR_NAT_INT);
-	if (!ft_atot(argv[PROG_TTOEAT], &ctx->t_toeat))
+	if (!ft_atot(argv[PROG_EAT_TIMER], &ctx->timers.eat))
 		error(ctx, ARG3 " " ERR_NAT_INT);
-	if (!ft_atot(argv[PROG_TTOSLEEP], &ctx->t_tosleep))
+	if (!ft_atot(argv[PROG_SLEEP_TIMER], &ctx->timers.sleep))
 		error(ctx, ARG4 " " ERR_NAT_INT);
-	if (argc == PROG__MAX && !ft_atoui(argv[PROG_TTOEACHP], &ctx->t_toeach))
+	if (argc == PROG__MAX && !ft_atoui(argv[PROG_EACHP_TIMER], each_ptr))
 		error(ctx, ARG5 " " ERR_NAT_INT);
 	if (argc != PROG__MAX)
-		ctx->t_toeach = __INT_MAX__;
-	if (ctx->nb == 0)
+		*each_ptr = __INT_MAX__;
+	if (ctx->philo_count == 0)
 		error(ctx, ARG1 " " ERR_NULL);
-	if (pthread_mutex_init(&ctx->mis_running, NULL))
+	if (pthread_mutex_init(&ctx->mutex_is_running, NULL))
 		error(ctx, ERR_MUTEX);
 }
 
@@ -88,11 +90,11 @@ void	philo_init(
 			t_philo_ctx *ctx
 			)
 {
-	ctx->forks = malloc(sizeof(*ctx->forks) * ctx->nb);
+	ctx->forks = malloc(sizeof(*ctx->forks) * ctx->philo_count);
 	if (ctx->forks == NULL)
 		error(ctx, ERR_ALLOC);
 	_philo_init_forks(ctx);
-	ctx->philos = malloc(sizeof(*ctx->philos) * ctx->nb);
+	ctx->philos = malloc(sizeof(*ctx->philos) * ctx->philo_count);
 	if (ctx->philos == NULL)
 		error(ctx, ERR_ALLOC);
 	_philo_init_philos(ctx);
@@ -108,22 +110,22 @@ static void	_philo_init_philos(
 				t_philo_ctx *ctx
 				)
 {
-	size_t	k;
+	size_t	i;
 
-	k = 0;
-	while (k < ctx->nb)
+	i = 0;
+	while (i < ctx->philo_count)
 	{
-		ctx->philos[k].r_fork = &ctx->forks[(k + 1) % ctx->nb];
-		ctx->philos[k].l_fork = &ctx->forks[k];
-		ctx->philos[k].id = k;
-		ctx->philos[k].last_eat = 0;
-		ctx->philos[k].nb_ate = 0;
-		ctx->philos[k].ctx = ctx;
-		ctx->philos[k].thread_id = 0;
-		if (pthread_mutex_init(&ctx->philos[k].eating, NULL)
-			|| pthread_mutex_init(&ctx->philos[k].eaten, NULL))
+		ctx->philos[i].r_fork = &ctx->forks[(i + 1) % ctx->philo_count];
+		ctx->philos[i].l_fork = &ctx->forks[i];
+		ctx->philos[i].id = i;
+		ctx->philos[i].last_time_eaten = 0;
+		ctx->philos[i].times_eaten = 0;
+		ctx->philos[i].ctx = ctx;
+		ctx->philos[i].thread_id = 0;
+		if (pthread_mutex_init(&ctx->philos[i].mutex_eating, NULL)
+			|| pthread_mutex_init(&ctx->philos[i].mutex_eaten, NULL))
 			error(ctx, ERR_MUTEX);
-		ctx->philos[k++].dead = 0;
+		ctx->philos[i++].is_dead = 0;
 	}
 }
 
@@ -131,13 +133,14 @@ static void	_philo_init_forks(
 				t_philo_ctx *ctx
 				)
 {
-	size_t	k;
+	size_t	i;
 
-	k = 0;
-	while (k < ctx->nb)
-		if (pthread_mutex_init(&ctx->forks[k++], NULL))
+	i = 0;
+	while (i < ctx->philo_count)
+		if (pthread_mutex_init(&ctx->forks[i++], NULL))
 			break ;
-	if (k != ctx->nb)
-		while (k-- != 0)
-			pthread_mutex_destroy(&ctx->forks[k]);
+	if (i == ctx->philo_count)
+		return ;
+	while (i--)
+		pthread_mutex_destroy(&ctx->forks[i]);
 }
