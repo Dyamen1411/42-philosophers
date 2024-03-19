@@ -6,7 +6,7 @@
 /*   By: amassias <amassias@student.42lehavre.fr    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/13 19:29:32 by amassias          #+#    #+#             */
-/*   Updated: 2024/03/19 17:57:27 by amassias         ###   ########.fr       */
+/*   Updated: 2024/03/19 18:00:10 by amassias         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,15 +108,15 @@ static void	_philo_check_each(
 				)
 {
 	size_t			i;
-	unsigned int	nb_ate;
+	unsigned int	times_eaten;
 
 	i = 0;
 	while (i < ctx->philo_count && ctx->timers.each != __INT_MAX__)
 	{
 		pthread_mutex_lock(&ctx->philos[i].mutex_eaten);
-		nb_ate = ctx->philos[i].times_eaten;
+		times_eaten = ctx->philos[i].times_eaten;
 		pthread_mutex_unlock(&ctx->philos[i].mutex_eaten);
-		if (nb_ate < (unsigned int) ctx->timers.each)
+		if (times_eaten < (unsigned int) ctx->timers.each)
 			break ;
 		++i;
 	}
